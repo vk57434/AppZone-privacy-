@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AppZone</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --card: #eef4ff;
+        --surface: #f7f9fc;
+        --primary: #2157d6;
+        --primary-dark: #173ea8;
+        --accent: #53c28b;
+        --text: #18212f;
+        --muted: #5d6b82;
+        --border: #dfe8f5;
+        --shadow: 0 18px 38px rgba(18, 35, 64, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        width: 100%;
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(180deg, #edf3ff 0%, var(--bg) 240px);
+        color: var(--text);
+      }
+
+      button, a {
+        font: inherit;
+      }
+
+      .app-shell {
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        background: #f6f9ff;
+        box-shadow: 0 0 0 1px rgba(24, 33, 47, 0.04), 0 12px 40px rgba(14, 28, 52, 0.04);
+        position: relative;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 20px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--primary), #4aa5ff);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 15px;
+        box-shadow: 0 8px 18px rgba(33, 87, 214, 0.28);
+      }
+
+      .content {
+        padding: 20px 18px 32px;
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.active {
+        display: block;
+      }
+
+      .hero {
+        background: linear-gradient(135deg, #eef5ff 0%, #f8fbff 100%);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 22px 18px 18px;
+        box-shadow: var(--shadow);
+      }
+
+      h1, h2, h3 {
+        margin: 0 0 12px;
+      }
+
+      .hero h1 {
+        font-size: clamp(1.7rem, 5vw, 2.5rem);
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--primary);
+        background: rgba(33, 87, 214, 0.08);
+        border: 1px solid rgba(33, 87, 214, 0.12);
+        border-radius: 999px;
+        padding: 6px 10px;
+        margin-bottom: 12px;
+      }
+
+      .muted {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .section-stack {
+        margin-top: 18px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .settings-card,
+      .info-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 10px 20px rgba(17, 28, 46, 0.04);
+      }
+
+      .settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .settings-row .meta {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-top: 4px;
+      }
+
+      .chevron {
+        color: var(--primary);
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 10px 0 0;
+      }
+
+      .policy {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px 20px 28px;
+        box-shadow: 0 12px 28px rgba(18, 35, 64, 0.06);
+      }
+
+      .policy-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .back-button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--text);
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .policy h2 {
+        font-size: clamp(1.2rem, 4vw, 1.8rem);
+        margin-bottom: 8px;
+      }
+
+      .policy h3 {
+        font-size: 1.02rem;
+        margin-top: 24px;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+
+      .policy p,
+      .policy li {
+        color: var(--text);
+        line-height: 1.7;
+        font-size: 0.97rem;
+      }
+
+      .policy ul {
+        margin: 0 0 0 20px;
+        padding: 0;
+      }
+
+      .policy-sections {
+        display: grid;
+        gap: 10px;
+      }
+
+      .policy strong {
+        color: var(--text);
+      }
+
+      .policy .support-email {
+        display: inline-block;
+        font-weight: 700;
+        color: var(--primary-dark);
+        text-decoration: underline;
+      }
+
+      .privacy-screen {
+        width: 100%;
+      }
+
+      .privacy-document {
+        width: min(100%, 900px);
+        margin: 0 auto;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 12px 28px rgba(18, 35, 64, 0.06);
+      }
+
+      .privacy-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .privacy-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .privacy-brand-copy {
+        min-width: 0;
+      }
+
+      .privacy-brand-title {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .privacy-effective,
+      .privacy-meta {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .privacy-back {
+        min-height: 44px;
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--primary-dark);
+        cursor: pointer;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .privacy-intro {
+        padding: 28px 0 22px;
+      }
+
+      .privacy-intro h1 {
+        margin-bottom: 8px;
+        font-size: clamp(1.8rem, 4vw, 2.35rem);
+        line-height: 1.15;
+      }
+
+      .privacy-intro p {
+        max-width: 760px;
+        margin: 0;
+      }
+
+      .privacy-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 26px;
+        padding: 16px;
+        background: #f1f6ff;
+        border: 1px solid #dce9ff;
+        border-radius: 12px;
+      }
+
+      .summary-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        color: var(--text);
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      .summary-icon {
+        display: inline-flex;
+        flex: 0 0 22px;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #dce9ff;
+        color: var(--primary-dark);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .privacy-contents {
+        margin-bottom: 30px;
+        padding: 16px 18px;
+        border-left: 3px solid var(--primary);
+        background: var(--surface);
+      }
+
+      .privacy-contents h2 {
+        margin-bottom: 10px;
+        font-size: 1.05rem;
+      }
+
+      .contents-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px 24px;
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .contents-list a {
+        color: var(--primary-dark);
+        line-height: 1.5;
+        text-decoration: none;
+      }
+
+      .contents-list a:hover,
+      .contents-list a:focus-visible {
+        text-decoration: underline;
+      }
+
+      .legal-content h2 {
+        scroll-margin-top: 20px;
+        padding-top: 20px;
+        margin: 30px 0 12px;
+        border-top: 1px solid var(--border);
+        color: var(--text);
+        font-size: 1.28rem;
+      }
+
+      .legal-content h2:first-child {
+        padding-top: 0;
+        margin-top: 0;
+        border-top: 0;
+      }
+
+      .legal-content h3 {
+        margin-top: 22px;
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+
+      .legal-content p,
+      .legal-content li {
+        color: #26354a;
+        font-size: 0.97rem;
+        line-height: 1.7;
+      }
+
+      .legal-content p {
+        margin: 0 0 14px;
+      }
+
+      .legal-content ul {
+        margin: 0 0 16px;
+        padding-left: 22px;
+      }
+
+      .deletion-panel,
+      .contact-panel {
+        margin-top: 18px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #f8fbff;
+      }
+
+      .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 10px 15px;
+        border: 0;
+        border-radius: 9px;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .action-button:hover,
+      .action-button:focus-visible {
+        background: var(--primary-dark);
+      }
+
+      .privacy-footer {
+        margin-top: 34px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.7;
+      }
+
+      :focus-visible {
+        outline: 3px solid rgba(33, 87, 214, 0.35);
+        outline-offset: 2px;
+      }
+
+      body.privacy-mode {
+        background: var(--bg);
+      }
+
+      body.privacy-mode .app-shell {
+        width: 100%;
+        max-width: none;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      body.privacy-mode .topbar {
+        display: none;
+      }
+
+      body.privacy-mode .content {
+        padding: 24px 20px 36px;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(83, 194, 139, 0.12);
+        color: #0f7c4d;
+        border: 1px solid rgba(83, 194, 139, 0.18);
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 7px 10px;
+      }
+
+      @media (min-width: 700px) {
+        body {
+          display: flex;
+          justify-content: center;
+          padding: 0;
+        }
+
+        .app-shell {
+          width: min(100%, 560px);
+          min-height: 100vh;
+          border-radius: 0;
+        }
+
+        body.privacy-mode .content {
+          padding-top: 32px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .privacy-document {
+          padding: 16px;
+          border-radius: 12px;
+        }
+
+        .privacy-header {
+          align-items: flex-start;
+          padding-bottom: 14px;
+        }
+
+        .privacy-effective {
+          display: block;
+          margin-top: 2px;
+        }
+
+        .privacy-summary,
+        .contents-list {
+          grid-template-columns: 1fr;
+        }
+
+        body.privacy-mode .content {
+          padding: 12px 16px 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">A</span>
+          <span>AppZone</span>
+        </div>
+        <span class="status-pill">Secure</span>
+      </header>
+
+      <main class="content">
+        <section id="home-screen" class="screen active" aria-labelledby="home-title">
+          <div class="hero">
+            <div class="eyebrow">Marketplace</div>
+            <h1 id="home-title">Discover apps, manage your account, and protect your privacy.</h1>
+            <p class="muted">AppZone helps you find, review, and install Android apps while keeping your account and content experience secure.</p>
+          </div>
+
+          <div class="section-stack">
+            <div class="info-card">
+              <p class="muted" style="margin: 0; font-weight: 600; color: var(--text);">App privacy</p>
+              <p class="muted" style="margin: 8px 0 0;">Review information practices for your account, installed apps, downloads, and developer activity.</p>
+            </div>
+
+            <div class="settings-card">
+              <button class="settings-row" data-route="settings" aria-label="Open Settings and About">
+                <div>
+                  <div>Settings &amp; About</div>
+                  <div class="meta">Account, privacy and app information</div>
+                </div>
+                <span class="chevron">›</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="settings-screen" class="screen" aria-labelledby="settings-title">
+          <div class="info-card" style="padding-bottom: 12px;">
+            <h2 id="settings-title" style="margin: 0 0 10px; font-size: 1.4rem;">Settings &amp; About</h2>
+            <p class="muted" style="margin: 0 0 12px;">Manage your account details, app preferences, and privacy information.</p>
+          </div>
+
+          <div class="section-stack">
+            <div class="settings-card">
+              <button class="settings-row" data-route="privacy" aria-label="Open Privacy Policy">
+                <div>
+                  <div>Privacy Policy</div>
+                  <div class="meta">AppZone data collection, sharing, and retention</div>
+                </div>
+                <span class="chevron">›</span>
+              </button>
+              <div class="divider"></div>
+              <button class="settings-row" data-route="home" style="margin-top: 16px;" aria-label="Back to home screen">
+                <div>
+                  <div>Back to Home</div>
+                  <div class="meta">Return to the main AppZone screen</div>
+                </div>
+                <span class="chevron">›</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="privacy-screen" class="screen privacy-screen" aria-labelledby="privacy-title">
+          <article class="privacy-document">
+            <header class="privacy-header">
+              <div class="privacy-brand">
+                <span class="brand-mark" aria-hidden="true">A</span>
+                <div class="privacy-brand-copy">
+                  <div class="privacy-brand-title">AppZone · Privacy Policy</div>
+                  <div class="privacy-effective">Effective September 2, 2026</div>
+                </div>
+              </div>
+              <button class="privacy-back" data-route="settings" aria-label="Back to settings">← Back</button>
+            </header>
+
+            <div class="privacy-intro">
+              <h1 id="privacy-title">Privacy Policy</h1>
+              <p class="privacy-meta">Last updated: September 2, 2026</p>
+              <p class="muted" style="margin-top: 16px;">AppZone respects your privacy and is committed to protecting your personal information. This Privacy Policy explains what information we collect, how we use it, how we protect it, and the choices available to you when you use AppZone.</p>
+            </div>
+
+            <aside class="privacy-summary" aria-label="Privacy summary">
+              <div class="summary-item"><span class="summary-icon" aria-hidden="true">✓</span><span>We collect only information needed to provide AppZone services.</span></div>
+              <div class="summary-item"><span class="summary-icon" aria-hidden="true">✓</span><span>We do not sell your personal information.</span></div>
+              <div class="summary-item"><span class="summary-icon" aria-hidden="true">✓</span><span>You control optional permissions such as camera access.</span></div>
+              <div class="summary-item"><span class="summary-icon" aria-hidden="true">✓</span><span>You can request deletion of your account and personal information.</span></div>
+            </aside>
+
+            <nav class="privacy-contents" aria-labelledby="contents-title">
+              <h2 id="contents-title">Contents</h2>
+              <ol class="contents-list">
+                <li><a href="#information-we-collect">Information We Collect</a></li>
+                <li><a href="#how-we-use-information">How We Use Information</a></li>
+                <li><a href="#camera-and-photos">Camera and Photos</a></li>
+                <li><a href="#application-installation">Application Installation and Device Information</a></li>
+                <li><a href="#local-storage">Local Storage and Preferences</a></li>
+                <li><a href="#third-party-services">Third-Party Services</a></li>
+                <li><a href="#information-sharing">Information Sharing</a></li>
+                <li><a href="#data-security">Data Security</a></li>
+                <li><a href="#data-retention">Data Retention</a></li>
+                <li><a href="#account-deletion">Account and Data Deletion</a></li>
+                <li><a href="#childrens-privacy">Children's Privacy</a></li>
+                <li><a href="#third-party-applications">Third-Party Applications</a></li>
+                <li><a href="#policy-changes">Changes to This Privacy Policy</a></li>
+                <li><a href="#contact-us">Contact Us</a></li>
+              </ol>
+            </nav>
+
+            <div class="legal-content">
+              <p>AppZone ("AppZone", "we", "us", or "our") is an Android application marketplace that allows users to discover, download, review, and manage applications and allows approved developers to publish and manage their applications.</p>
+              <p>This Privacy Policy explains how AppZone collects, uses, stores, and protects information when you use the AppZone application and related services.</p>
+
+              <h2 id="information-we-collect">1. Information We Collect</h2>
+
+              <h3>1.1 Account and Authentication Information</h3>
+              <p>When you create or sign in to an AppZone account, we may collect:</p>
+              <ul>
+                <li>Name or display name</li>
+                <li>Email address</li>
+                <li>Profile photo, if provided</li>
+                <li>Firebase authentication identifier</li>
+                <li>Account role, such as user or developer</li>
+                <li>Account creation and update information</li>
+              </ul>
+              <p>AppZone may support authentication through Google and Firebase Authentication. Authentication providers may process information according to their own privacy policies.</p>
+
+              <h3>1.2 Profile Information</h3>
+              <p>If you choose to create or update your profile, AppZone may collect:</p>
+              <ul>
+                <li>Name</li>
+                <li>Email address</li>
+                <li>Profile picture</li>
+                <li>Developer-related information when you apply for or use a developer account</li>
+              </ul>
+              <p>Profile pictures may be selected from your device's gallery or captured using your device camera.</p>
+
+              <h3>1.3 Developer Information</h3>
+              <p>Users applying to become developers may provide additional information such as:</p>
+              <ul>
+                <li>Company name (for example: Max Technologies &amp; Pvt Ltd)</li>
+                <li>Application or business description</li>
+                <li>Reason for requesting developer access</li>
+                <li>Developer name (if required by the platform, for example: Vivek)</li>
+              </ul>
+              <p>This information may be reviewed by AppZone administrators for developer-account approval and platform administration.</p>
+
+              <h3>1.4 App and Usage Information</h3>
+              <p>To provide AppZone's marketplace functionality, we may process information related to your use of the service, including:</p>
+              <ul>
+                <li>Applications viewed</li>
+                <li>Recently viewed applications</li>
+                <li>Favorite applications</li>
+                <li>Applications downloaded through AppZone</li>
+                <li>Application reviews and ratings</li>
+                <li>Downloaded application package names and versions</li>
+                <li>Application installation/update status where required for marketplace functionality</li>
+                <li>App interaction and preference information</li>
+              </ul>
+              <p>Download records may be associated with your authenticated account so that AppZone can maintain download statistics, prevent duplicate download records, and provide marketplace functionality.</p>
+
+              <h3>1.5 Reviews and Public Content</h3>
+              <p>If you submit an application review, rating, or comment, information associated with the review may be stored and displayed to other AppZone users.</p>
+              <p>Depending on your account information and the functionality available, your display name and profile photo may appear alongside your review.</p>
+              <p>Please do not include sensitive personal information in public reviews or other content that you submit.</p>
+
+              <h3>1.6 Application and Developer Content</h3>
+              <p>Developers may upload application-related information and files, including:</p>
+              <ul>
+                <li>Application name</li>
+                <li>Package name</li>
+                <li>Company name: Max Technologies &amp; Pvt Ltd</li>
+                <li>Developer name (if required): Vivek</li>
+                <li>Description</li>
+                <li>Category</li>
+                <li>Version information</li>
+                <li>Application icon</li>
+                <li>Screenshots</li>
+                <li>Release notes</li>
+                <li>APK/application files</li>
+                <li>Application file metadata such as size and cryptographic hash</li>
+              </ul>
+              <p>Uploaded applications may be reviewed by AppZone administrators before being made available to users.</p>
+
+              <h2 id="how-we-use-information">2. How We Use Information</h2>
+              <p>We may use collected information to:</p>
+              <ul>
+                <li>Create and manage user accounts</li>
+                <li>Authenticate users</li>
+                <li>Provide Google/Firebase sign-in functionality</li>
+                <li>Maintain user profiles</li>
+                <li>Provide application discovery and marketplace functionality</li>
+                <li>Store favorites and recently viewed applications</li>
+                <li>Process application downloads</li>
+                <li>Maintain download statistics</li>
+                <li>Display reviews and ratings</li>
+                <li>Provide application installation and update functionality</li>
+                <li>Process developer applications</li>
+                <li>Allow developers to upload and manage applications</li>
+                <li>Review and moderate applications</li>
+                <li>Communicate important service-related information</li>
+                <li>Maintain and improve AppZone</li>
+                <li>Detect misuse, abuse, fraud, or security issues</li>
+                <li>Protect the security and integrity of the service</li>
+                <li>Comply with applicable legal obligations</li>
+              </ul>
+
+              <h2 id="camera-and-photos">3. Camera and Photos</h2>
+              <p>AppZone may request access to the device camera when you choose to take a profile picture.</p>
+              <p>AppZone may also allow you to select a picture from your device's gallery.</p>
+              <p>Camera or gallery access is used only when you initiate a relevant profile-photo action. AppZone does not use the camera to continuously monitor you.</p>
+              <p>A selected profile image may be uploaded to our backend or associated storage service so that it can be displayed as your profile picture.</p>
+              <p>You can remove your profile picture through the application where this functionality is available.</p>
+
+              <h2 id="application-installation">4. Application Installation and Device Information</h2>
+              <p>AppZone provides functionality for downloading and installing Android applications.</p>
+              <p>The application may inspect installed application/package information on the device to determine whether applications are already installed and to provide appropriate installation or update functionality.</p>
+              <p>AppZone may request Android permissions related to package visibility and application installation to provide these features.</p>
+              <p>We do not claim ownership of applications installed on your device. Applications downloaded through AppZone may have their own privacy policies and data practices, which are separate from AppZone.</p>
+              <p>You should review the privacy policy and permissions of an application before installing or using it.</p>
+
+              <h2 id="local-storage">5. Local Storage and Preferences</h2>
+              <p>AppZone may store certain preferences locally on your device, including:</p>
+              <ul>
+                <li>Theme preference</li>
+                <li>Notification preference</li>
+                <li>Automatic update preference</li>
+                <li>Download preference</li>
+              </ul>
+              <p>These settings are primarily used to remember your choices between application sessions.</p>
+
+              <h2 id="third-party-services">6. Third-Party Services</h2>
+              <p>AppZone may use third-party services and infrastructure to provide its functionality. These may include services such as:</p>
+
+              <h3>Firebase Authentication</h3>
+              <p>Firebase Authentication may be used to authenticate AppZone users and support account sign-in.</p>
+
+              <h3>Google Sign-In</h3>
+              <p>Google services may be used when you choose to authenticate through your Google account.</p>
+
+              <h3>Backend and Database Services</h3>
+              <p>AppZone uses backend infrastructure and database services to store account, application, review, download, developer, and other service-related information.</p>
+
+              <h3>File and Image Storage Services</h3>
+              <p>Application files, icons, screenshots, and profile images may be stored using third-party hosting or storage infrastructure used by AppZone.</p>
+              <p>Third-party services may process information according to their own terms and privacy policies.</p>
+
+              <h2 id="information-sharing">7. Information Sharing</h2>
+              <p>We do not sell your personal information.</p>
+              <p>We may share or disclose information in the following circumstances:</p>
+
+              <h3>Service Providers</h3>
+              <p>Information may be processed by trusted service providers that help us operate authentication, hosting, databases, file storage, application delivery, and other infrastructure.</p>
+
+              <h3>Public Marketplace Information</h3>
+              <p>Some information submitted to AppZone may be publicly visible as part of the marketplace. This may include:</p>
+              <ul>
+                <li>Application information</li>
+                <li>Company name: Max Technologies &amp; Pvt Ltd</li>
+                <li>Application icon and screenshots</li>
+                <li>Application description</li>
+                <li>Ratings and reviews</li>
+                <li>Reviewer's display name and profile photo, where applicable</li>
+              </ul>
+
+              <h3>Legal Requirements</h3>
+              <p>We may disclose information when reasonably necessary to:</p>
+              <ul>
+                <li>Comply with applicable law or legal process</li>
+                <li>Respond to valid governmental requests</li>
+                <li>Protect our rights or property</li>
+                <li>Investigate fraud or abuse</li>
+                <li>Protect the safety and security of users or the service</li>
+              </ul>
+
+              <h2 id="data-security">8. Data Security</h2>
+              <p>We take reasonable technical and organizational measures to protect information handled by AppZone.</p>
+              <p>Authentication tokens and account information are used to provide authenticated access to protected services.</p>
+              <p>However, no internet transmission or electronic storage system can be guaranteed to be completely secure. Therefore, we cannot guarantee absolute security of your information.</p>
+
+              <h2 id="data-retention">9. Data Retention</h2>
+              <p>We retain information for as long as reasonably necessary to provide AppZone services, maintain accounts, operate the marketplace, meet legitimate business requirements, resolve disputes, enforce agreements, and comply with applicable legal obligations.</p>
+              <p>Retention periods may vary depending on the type of information and its purpose.</p>
+
+              <h2 id="account-deletion">10. Account and Data Deletion</h2>
+              <p>You may request deletion of your AppZone account and associated personal information by contacting us.</p>
+              <p>When a deletion request is received, we will review and process the request in accordance with applicable law and our legitimate operational or legal requirements.</p>
+              <p>Certain information may need to be retained where required by law, necessary for security, fraud prevention, dispute resolution, or legitimate record-keeping purposes.</p>
+              <div class="deletion-panel">
+                <p><strong>Request account or data deletion</strong></p>
+                <p>Send a request to <a class="support-email" href="mailto:Max459010@gmail.com">Max459010@gmail.com</a>. Please include the email address associated with your AppZone account.</p>
+                <a class="action-button" href="mailto:Max459010@gmail.com?subject=AppZone%20account%20deletion%20request">Request account deletion</a>
+              </div>
+
+              <h2 id="childrens-privacy">11. Children's Privacy</h2>
+              <p>AppZone is not intended to knowingly collect personal information from children where such collection is prohibited by applicable law.</p>
+              <p>If you believe that a child has provided personal information to AppZone without appropriate authorization, please contact us so that we can review and take appropriate action.</p>
+
+              <h2 id="third-party-applications">12. Third-Party Applications</h2>
+              <p>AppZone may distribute applications created by independent developers.</p>
+              <p>AppZone is not responsible for the privacy practices, content, security, or data collection practices of third-party applications.</p>
+              <p>Each application may collect information independently after installation. Users should review the privacy policy and requested permissions of each application before installing it.</p>
+
+              <h2 id="policy-changes">13. Changes to This Privacy Policy</h2>
+              <p>We may update this Privacy Policy from time to time to reflect changes to AppZone, our services, legal requirements, or data practices.</p>
+              <p>When we make material changes, we may update the "Effective Date" at the top of this policy and, where appropriate, provide additional notice through the application.</p>
+              <p>You should periodically review this Privacy Policy for changes.</p>
+
+              <h2 id="contact-us">14. Contact Us</h2>
+              <p>If you have questions, concerns, or requests regarding this Privacy Policy or your personal information, please contact:</p>
+              <div class="contact-panel">
+                <p><strong>AppZone Support</strong></p>
+                <p><strong>Email:</strong> <a class="support-email" href="mailto:Max459010@gmail.com">Max459010@gmail.com</a></p>
+                <a class="action-button" href="mailto:Max459010@gmail.com?subject=AppZone%20Privacy%20Policy%20question">Contact Support</a>
+              </div>
+            </div>
+
+            <footer class="privacy-footer">
+              <strong>AppZone</strong><br />
+              Privacy Policy<br />
+              Last updated: September 2, 2026<br /><br />
+              © 2026 AppZone. All rights reserved.
+            </footer>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const routes = ["home", "settings", "privacy"];
+
+      function showScreen(name) {
+        const valid = routes.includes(name) ? name : "home";
+        document.body.classList.toggle("privacy-mode", valid === "privacy");
+        document.querySelectorAll(".screen").forEach((screen) => {
+          screen.classList.toggle("active", screen.id === `${valid}-screen`);
+        });
+        window.location.hash = valid;
+      }
+
+      document.addEventListener("click", (event) => {
+        const routeButton = event.target.closest("[data-route]");
+        if (!routeButton) return;
+        const route = routeButton.getAttribute("data-route");
+        if (route) {
+          showScreen(route);
+        }
+      });
+
+      function initRouteFromHash() {
+        const hash = window.location.hash.replace("#", "").trim();
+        if (routes.includes(hash)) {
+          showScreen(hash);
+          return;
+        }
+        showScreen("home");
+      }
+
+      window.addEventListener("hashchange", initRouteFromHash);
+      initRouteFromHash();
+    </script>
+  </body>
+</html>
